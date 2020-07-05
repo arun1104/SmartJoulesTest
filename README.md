@@ -3,6 +3,8 @@
 ## Setup
 npm install
 
+## Start server
+npm start
 ## Configuring node server
 Change configuration variables in .env file.
 
