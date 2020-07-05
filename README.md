@@ -1,4 +1,4 @@
-# SMart Joules Test
+# Smart Joules Test
 
 ## Setup
 npm install
