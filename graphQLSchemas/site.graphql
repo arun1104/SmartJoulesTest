@@ -1,25 +1,15 @@
 type Query {
         getSite(id: ID!): Site
+        getSites(index:Int,pageSize:Int): [Site]
     },
    type Site {
         id: ID!
         name: String!
         location: String
-        industry: Industry
+        industry: String
     }
 type Mutation {
-   newSite(location:String,industry:String,name:String):Site
-   editSite(id:ID,name:String):Site
-   removeSite(id:ID):Site
-}
-
-type Industry {
-  name: String!
-  appearsIn: [IndustryTypes]!
-}
-
-enum IndustryTypes {
-  hospital, 
-  papermill, 
-  cement
+   newSite(location:String!,industry:String!,name:String!):Site
+   editSite(id:ID!,name:String!):Site
+   removeSite(id:ID!):Site
 }
