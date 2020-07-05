@@ -1,0 +1,25 @@
+type Query {
+        getSite(id: ID!): Site
+    },
+   type Site {
+        id: ID!
+        name: String!
+        location: String
+        industry: Industry
+    }
+type Mutation {
+   newSite(location:String,industry:String,name:String):Site
+   editSite(id:ID,name:String):Site
+   removeSite(id:ID):Site
+}
+
+type Industry {
+  name: String!
+  appearsIn: [IndustryTypes]!
+}
+
+enum IndustryTypes {
+  hospital, 
+  papermill, 
+  cement
+}
