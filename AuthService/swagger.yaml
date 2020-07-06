@@ -1,0 +1,51 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: 'Smart Joules Auth Service'
+  description: 'To get token'
+  contact: {}
+host: '127.0.0.1:3000'
+basePath: /v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /login:
+    post:
+      tags:
+      - "Authentication"
+      description: 'get token on valid credentials'
+      summary: 'get JWT token with validity 1 hour on valid credentials'
+      operationId: 'login'
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/login"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: "#/definitions/loginResponse"
+        '400':
+          description: 'Bad request'
+definitions:
+  login:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+      password:
+        type: "string"
+  loginResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"

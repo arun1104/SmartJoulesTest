@@ -1,0 +1,41 @@
+{
+    "name": "configuration_service",
+    "version": "1.0.0",
+    "description": "Configuration Management in Smart Joules",
+    "main": "app.js",
+    "dependencies": {
+        "@hapi/joi": "^17.1.1",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-correlation-id": "^1.3.1",
+        "express-graphql": "^0.9.0",
+        "graphql": "^14.4.2",
+        "mongoose": "^5.9.19",
+        "morgan": "^1.10.0",
+        "uuid": "^8.2.0"
+    },
+    "devDependencies": {
+        "eslint": "^7.2.0",
+        "eslint-config-strongloop": "^2.1.0",
+        "chai": "^4.2.0",
+        "chai-http": "^4.3.0",
+        "mocha": "^6.1.4",
+        "mochawesome": "^4.0.1",
+        "sinon": "^9.0.2"
+    },
+    "scripts": {
+        "test": "npm start",
+        "start": "node -r dotenv/config app.js",
+        "fixlint": "eslint --fix --ignore-path .gitignore ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/arun1104/SmartJoulesTest.git"
+    },
+    "author": "arun rajeevan",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/arun1104/SmartJoulesTest/issues"
+    },
+    "homepage": "https://github.com/arun1104/SmartJoulesTest#readme"
+}
