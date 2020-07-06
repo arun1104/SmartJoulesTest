@@ -1,7 +1,6 @@
 'use strict';
-const { DataAccessLayer } = require('../sdk/db/dataAccessLayer.js');
+const dataAccessLayer = require('../sdk/db/dataAccessLayer.js');
 const constants = require('../utilities/constants');
-let dataAccessLayer = new DataAccessLayer();
 
 class Resolvers {
   constructor(dbLayer = dataAccessLayer) {

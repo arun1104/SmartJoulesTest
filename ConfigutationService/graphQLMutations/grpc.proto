@@ -1,0 +1,18 @@
+syntax = "proto3";
+package dejoule;
+
+service DejouleSite {
+  rpc safeToDelete (RequestParams) returns (Response) {}
+}
+service DejouleDevice {
+ rpc safeToDelete (RequestParams) returns (Response) {}
+ rpc safeToUpdate (RequestParams) returns (Response) {}
+}
+
+message RequestParams {
+  required string id = 1;
+}
+
+message Response {
+  required bool isSafe = 1;
+}

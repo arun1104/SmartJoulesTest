@@ -8,6 +8,20 @@ class DataAccessLayer {
     this.getDocs = this.getDocs.bind(this);
     this.editDoc = this.editDoc.bind(this);
     this.saveDoc = this.saveDoc.bind(this);
+    this.removeDoc = this.removeDoc.bind(this);
+  }
+
+  async removeDoc(options, modelName) {
+    try {
+      let connectionString = `${process.env.mongoUrl}/${process.env.dbName}`;
+      await this.mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
+      let model = this.mongoose.model(modelName);
+      let result = await model.findOneAndDelete(options.query);
+      return result;
+    } catch (error) {
+      console.log('Error on editDoc');
+      return [];
+    }
   }
 
   async editDoc(options, modelName) {
@@ -57,4 +71,4 @@ class DataAccessLayer {
   }
 }
 
-module.exports = { DataAccessLayer };
+module.exports = new DataAccessLayer();

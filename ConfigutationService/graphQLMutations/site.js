@@ -1,9 +1,20 @@
 'use strict';
-const { DataAccessLayer } = require('../sdk/db/dataAccessLayer.js');
+const dataAccessLayer = require('../sdk/db/dataAccessLayer.js');
 const Joi = require('@hapi/joi');
-let dataAccessLayer = new DataAccessLayer();
 const constants = require('../utilities/constants');
 const {v4: uuidv4} = require('uuid');
+const PROTO_PATH = __dirname + '/grpc.proto';
+const grpc = require('grpc');
+const protoLoader = require('@grpc/proto-loader');
+const packageDefinition = protoLoader.loadSync(
+  PROTO_PATH,
+  {keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
+  });
+const dejoule_proto = grpc.loadPackageDefinition(packageDefinition).dejoule;
 
 class Mutations {
 
@@ -17,7 +28,7 @@ class Mutations {
     try {
       let body = await siteSchema.validateAsync(args);
       body._id = uuidv4();
-      let res = await dataAccessLayer.saveDoc(body, constants['SITE_COLLECTION']);
+      let res = await this.dataAccessLayer.saveDoc(body, constants['SITE_COLLECTION']);
       res.id = res._id;
       delete res['_id'];
       return res;
@@ -40,13 +51,24 @@ class Mutations {
     let options = {query: {_id: args.id}};
     delete args['id'];
     options.data = args;
-    let res = await dataAccessLayer.editDoc(options, constants['SITE_COLLECTION']);
+    let res = await this.dataAccessLayer.editDoc(options, constants['SITE_COLLECTION']);
     return res;
   }
 
   async removeSite(args, context) {
-    let res = await dataAccessLayer.removeDoc(args);
-    return res;
+    var client = new dejoule_proto.DejouleSite('0.0.0.0:50051', grpc.credentials.createInsecure());
+    client.safeToDelete({id: 'akJH3'}, async function(err, response) {
+      console.log(err);
+      if (response.isSafe){
+        let options = {query: {_id: args.id}};
+        delete args['id'];
+        options.data = args;
+        let res = await dataAccessLayer.removeDoc(options, constants['SITE_COLLECTION']);
+        return res;
+      }
+      console.log('Response from Grpc server:', response);
+    });
+
   }
 }
 
