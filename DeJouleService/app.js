@@ -12,7 +12,8 @@ const packageDefinition = protoLoader.loadSync(
 const dejoule_proto = grpc.loadPackageDefinition(packageDefinition).dejoule;
 function safeToDelete(call, callback) {
   console.log(call);
-  callback(null, {isSafe: true});
+  let randomValue = getRandomBoolean();
+  callback(null, {isSafe: randomValue});
 }
 function main() {
   const server = new grpc.Server();
@@ -20,5 +21,9 @@ function main() {
   server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
   server.start();
   console.log('grpc server started at 50051')
+}
+
+function getRandomBoolean(){
+  return Math.random() >= 0.5;
 }
 main();
