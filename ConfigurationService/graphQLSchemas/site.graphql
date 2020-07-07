@@ -1,6 +1,8 @@
 type Query {
         getSite(id: ID!): Site
         getSites(index:Int,pageSize:Int): [Site]
+        getDevice(id: ID!): Device
+        getDevices(index:Int,pageSize:Int): [Device]
     },
    type Site {
         id: ID!
