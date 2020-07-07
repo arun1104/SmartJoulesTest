@@ -91,6 +91,7 @@ async function invokeGrpc(method, args){
   });
   return promise;
 }
+
 const siteSchema = Joi.object({
   name: Joi.string()
     .trim()
