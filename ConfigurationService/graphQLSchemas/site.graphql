@@ -8,8 +8,17 @@ type Query {
         location: String
         industry: String
     }
+   type Device {
+        id: Int!
+        name: String!
+        isOnline: Boolean
+        siteId: String
+    }
 type Mutation {
    newSite(location:String!,industry:String!,name:String!):Site
    editSite(id:ID!,name:String!):Site
    removeSite(id:ID!):Site
+   newDevice(siteId:String!,isOnline:Boolean,name:String!):Device
+   editDevice(id:ID!,isOnline:Boolean,name:String,siteId:String):Device
+   removeDevice(id:ID!):Device
 }

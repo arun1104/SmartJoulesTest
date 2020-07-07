@@ -9,6 +9,20 @@ class DataAccessLayer {
     this.editDoc = this.editDoc.bind(this);
     this.saveDoc = this.saveDoc.bind(this);
     this.removeDoc = this.removeDoc.bind(this);
+    this.getLastDoc = this.getLastDoc.bind(this);
+  }
+
+  async getLastDoc(modelName) {
+    try {
+      let connectionString = `${process.env.mongoUrl}/${process.env.dbName}`;
+      await this.mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
+      let model = this.mongoose.model(modelName);
+      let result = await model.find().sort({_id: -1}).limit(1);
+      return result;
+    } catch (error) {
+      console.log('Error on getLastDoc');
+      return [];
+    }
   }
 
   async removeDoc(options, modelName) {

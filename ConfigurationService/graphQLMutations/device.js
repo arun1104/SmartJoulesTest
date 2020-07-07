@@ -20,15 +20,20 @@ class Mutations {
 
   constructor(dbLayer = dataAccessLayer) {
     this.dataAccessLayer = dbLayer;
-    this.newSite = this.newSite.bind(this);
-    this.editSite = this.editSite.bind(this);
-    this.removeSite = this.removeSite.bind(this);
+    this.newDevice = this.newDevice.bind(this);
+    this.editDevice = this.editDevice.bind(this);
+    this.removeDevice = this.removeDevice.bind(this);
   }
-  async newSite(args, context) {
+  async newDevice(args, context) {
     try {
-      let body = await siteSchema.validateAsync(args);
-      body._id = uuidv4();
-      let res = await this.dataAccessLayer.saveDoc(body, constants['SITE_COLLECTION']);
+      let body = await deviceSchema.validateAsync(args);
+      let lastDevice = await this.dataAccessLayer.getLastDoc(constants['DEVICE_COLLECTION']);
+      if (lastDevice.length > 0){
+        body._id = ++lastDevice[0]._id;
+      } else {
+        body._id = 1;
+      }
+      let res = await this.dataAccessLayer.saveDoc(body, constants['DEVICE_COLLECTION']);
       res.id = res._id;
       delete res['_id'];
       return res;
@@ -47,29 +52,29 @@ class Mutations {
     }
   }
 
-  async editSite(args, context) {
+  async editDevice(args, context) {
     let options = {query: {_id: args.id}};
     delete args['id'];
     options.data = args;
-    let res = await this.dataAccessLayer.editDoc(options, constants['SITE_COLLECTION']);
+    let res = await this.dataAccessLayer.editDoc(options, constants['DEVICE_COLLECTION']);
     return res;
   }
 
-  async removeSite(args, context) {
+  async removeDevice(args, context) {
     try {
       const response = await invokeGrpc('safeToDelete', {id: 'akJH3'});
       if (response.isSafe){
         let options = {query: {_id: args.id}};
         delete args['id'];
         options.data = args;
-        let res = await dataAccessLayer.removeDoc(options, constants['SITE_COLLECTION']);
+        let res = await dataAccessLayer.removeDoc(options, constants['DEVICE_COLLECTION']);
         if (res){
           return res;
         } else {
-          throw new Error('No such Site exists');
+          throw new Error('No such Device exists');
         }
       } else {
-        throw new Error('Not safe to delete site');
+        throw new Error('Not safe to delete device');
       }
     } catch (err){
       console.log(err);
@@ -79,7 +84,7 @@ class Mutations {
 }
 
 async function invokeGrpc(method, args){
-  const client = new dejoule_proto.DejouleSite(process.env.DejouleUrl, grpc.credentials.createInsecure());
+  const client = new dejoule_proto.DejouleDevice(process.env.DejouleUrl, grpc.credentials.createInsecure());
   const promise = new Promise((resolve, reject) => {
     client[method](args, async function(err, response) {
       if (err){
@@ -92,17 +97,13 @@ async function invokeGrpc(method, args){
   return promise;
 }
 
-const siteSchema = Joi.object({
+const deviceSchema = Joi.object({
   name: Joi.string()
     .trim()
     .min(2)
     .max(50)
     .required(),
-  industry: Joi.string().valid('hospital', 'papermill', 'cement').required(),
-  location: Joi.string()
-    .trim()
-    .min(2)
-    .max(50)
-    .required(),
+  siteId: Joi.string().required(),
+  isOnline: Joi.boolean(),
 });
 module.exports = new Mutations();

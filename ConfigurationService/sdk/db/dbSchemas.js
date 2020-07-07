@@ -12,9 +12,10 @@ const siteSchema = new Schema({
 mongoose.model('sites', siteSchema, 'sites');
 
 const deviceSchema = new Schema({
+  _id: { type: Number, required: true },
   name: { type: String, trim: true, required: true },
   siteId: { type: String, trim: true, required: true },
-  isOnline: { type: Boolean, required: true },
+  isOnline: { type: Boolean },
 }, { strict: false, timestamps: true });
 
 mongoose.model('devices', deviceSchema, 'devices');

@@ -7,21 +7,23 @@ const { buildSchema } = require('graphql');
 const fs = require('fs');
 const path = require('path');
 const schema = fs.readFileSync(path.resolve(__dirname, './graphQLSchemas/site.graphql'), 'utf8');
-const siteSchema = buildSchema(schema);
-const { Resolvers } = require('./graphQLResolvers/site');
-const { Mutations } = require('./graphQLMutations/site.js');
+const parsedSchema = buildSchema(schema);
+const siteResolvers = require('./graphQLResolvers/site');
+const siteMutations = require('./graphQLMutations/site.js');
+
+const deviceResolvers = require('./graphQLResolvers/device');
+const deviceMutations = require('./graphQLMutations/device');
 var app = express();
-const resolvers = new Resolvers();
-const mutations = new Mutations();
+
 app.use('/configurations/device', express_graphql({
-  schema: siteSchema,
-  rootValue: {...resolvers, ...mutations },
+  schema: parsedSchema,
+  rootValue: {...deviceResolvers, ...deviceMutations },
   graphiql: true,
 }));
 
 app.use('/configurations/site', express_graphql({
-  schema: siteSchema,
-  rootValue: {...resolvers, ...mutations },
+  schema: parsedSchema,
+  rootValue: {...siteResolvers, ...siteMutations },
   graphiql: true,
 }));
 const port = (process.env.PORT) ? process.env.PORT : 3000;
