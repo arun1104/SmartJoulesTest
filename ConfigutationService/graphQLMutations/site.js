@@ -56,22 +56,41 @@ class Mutations {
   }
 
   async removeSite(args, context) {
-    var client = new dejoule_proto.DejouleSite('0.0.0.0:50051', grpc.credentials.createInsecure());
-    client.safeToDelete({id: 'akJH3'}, async function(err, response) {
-      console.log(err);
+    try {
+      const response = await invokeGrpc('safeToDelete', {id: 'akJH3'});
       if (response.isSafe){
         let options = {query: {_id: args.id}};
         delete args['id'];
         options.data = args;
         let res = await dataAccessLayer.removeDoc(options, constants['SITE_COLLECTION']);
-        return res;
+        if (res){
+          return res;
+        } else {
+          throw new Error('No such Site exists');
+        }
+      } else {
+        throw new Error('Not safe to delete site');
       }
-      console.log('Response from Grpc server:', response);
-    });
-
+    } catch (err){
+      console.log(err);
+      throw err;
+    }
   }
 }
 
+async function invokeGrpc(method, args){
+  const client = new dejoule_proto.DejouleSite(process.env.DejouleUrl, grpc.credentials.createInsecure());
+  const promise = new Promise((resolve, reject) => {
+    client[method](args, async function(err, response) {
+      if (err){
+        reject(err);
+      } else {
+        resolve(response);
+      }
+    });
+  });
+  return promise;
+}
 const siteSchema = Joi.object({
   name: Joi.string()
     .trim()
