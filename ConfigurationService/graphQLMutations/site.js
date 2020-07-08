@@ -50,7 +50,8 @@ class Mutations {
   async editSite(args, context) {
     let options = {query: {_id: args.id}};
     delete args['id'];
-    options.data = args;
+    let body = await siteUpdateSchema.validateAsync(args);
+    options.data = body;
     let res = await this.dataAccessLayer.editDoc(options, constants['SITE_COLLECTION']);
     return res;
   }
@@ -62,6 +63,8 @@ class Mutations {
         let options = {query: {_id: args.id}};
         delete args['id'];
         options.data = args;
+        let removeQUery = {query: {siteId: options.query._id}};
+        await dataAccessLayer.removeManyDocs(removeQUery, constants['DEVICE_COLLECTION']);
         let res = await dataAccessLayer.removeDoc(options, constants['SITE_COLLECTION']);
         if (res){
           return res;
@@ -100,6 +103,14 @@ const siteSchema = Joi.object({
     .required(),
   industry: Joi.string().valid('hospital', 'papermill', 'cement').required(),
   location: Joi.string()
+    .trim()
+    .min(2)
+    .max(50)
+    .required(),
+});
+
+const siteUpdateSchema = Joi.object({
+  name: Joi.string()
     .trim()
     .min(2)
     .max(50)
